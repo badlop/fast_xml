@@ -48,6 +48,11 @@ init() ->
 
 %% Replace element_to_binary/1 with NIF
 load_nif() ->
+    case os:getenv("COVERALLS") of
+        "true" -> ok;
+        _ -> load_nif2()
+    end.
+load_nif2() ->
     SOPath = p1_nif_utils:get_so_path(?MODULE, [fast_xml], "fxml"),
     load_nif(SOPath).
 
