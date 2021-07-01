@@ -29,8 +29,16 @@ jobs:
     - uses: actions/checkout@v2
     - run: ./configure --enable-gcov
     - run: rebar3 compile
-    - run: rebar3 eunit -v
-    - run: rebar3 eunit -v
+    - name: Run tests to obtain Erlang coverage
+      run: |
+        mv test/unload_test.erl .
+        rebar3 eunit -v
+        mv _build/test/cover/eunit.coverdata .
+    - name: Run tests to obtain C coverage
+      run: |
+        mv unload_test.erl test/
+        rebar3 eunit -v
+        mv eunit.coverdata _build/test/cover/
     - run: pip install --user cpp-coveralls
     - run: cpp-coveralls -b `pwd` --verbose --gcov-options '\-lp' --dump c.json
     - name: Send to Coveralls
